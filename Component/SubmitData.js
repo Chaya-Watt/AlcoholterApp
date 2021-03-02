@@ -5,8 +5,6 @@ const SubmitData = async (name,age,height,weight,phone1,phone2) => {
     .collection('posts')
     .doc("Profile")
     .set({
-      Name: name,
-      Age: age,
     })
     .then(() => {
       console.log('post Added');
