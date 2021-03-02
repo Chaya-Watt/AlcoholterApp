@@ -13,6 +13,7 @@ import ButtonHomeScreen from '../Component/ButtonHomeScreen';
 import {AuthContext} from '../Navigation/AuthProvider';
 import {BleManager} from 'react-native-ble-plx';
 import base64 from 'react-native-base64';
+import ShareText from '../Component/ShareText'
 
 const manager = new BleManager();
 
@@ -156,6 +157,7 @@ const HomeScreen = ({navigation}) => {
             <ButtonHomeScreen
               Icon={require('../Icons/email.png')}
               Title="ข้อความติดต่อ"
+              onPress={()=>{ShareText(Data)}}
             />
             <ButtonHomeScreen
               Icon={require('../Icons/location.png')}
