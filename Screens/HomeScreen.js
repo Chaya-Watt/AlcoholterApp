@@ -151,7 +151,7 @@ const HomeScreen = ({navigation}) => {
             <ButtonHomeScreen
               Icon={require('../Icons/phone-call.png')}
               Title="โทรศัพท์ติดต่อ"
-              onPress={() => alert('Phone')}
+              onPress={() => navigation.navigate('Contact')}
             />
             <ButtonHomeScreen
               Icon={require('../Icons/email.png')}

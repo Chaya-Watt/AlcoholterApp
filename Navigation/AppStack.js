@@ -3,6 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from '../Screens/HomeScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
 import LawScreen from '../Screens/LawScreen'
+import ContactScreen from '../Screens/ContactScreen'
 
 const Stack = createStackNavigator();
 
@@ -25,7 +26,11 @@ const AppStack = () => {
         component={LawScreen}
         options={{headerShown: false}}
       />
-
+      <Stack.Screen
+        name="Contact"
+        component={ContactScreen}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
