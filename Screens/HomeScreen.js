@@ -84,6 +84,7 @@ const HomeScreen = ({navigation}) => {
             <ButtonHomeScreen
               Icon={require('../Icons/auction.png')}
               Title="กฎหมาย"
+              onPress={() => {navigation.navigate('Law');}}
             />
             <ButtonHomeScreen
               Icon={require('../Icons/help.png')}
