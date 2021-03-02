@@ -3,6 +3,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from '../Screens/HomeScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
 import LawScreen from '../Screens/LawScreen'
+import AdviceScreen from '../Screens/AdviceScreen'
+import BeforeAdvice from '../Screens/BeforeAdvice'
+import AfterAdvice from '../Screens/AfterAdvice'
 
 const Stack = createStackNavigator();
 
@@ -23,6 +26,21 @@ const AppStack = () => {
       <Stack.Screen
         name="Law"
         component={LawScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Advice"
+        component={AdviceScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Before"
+        component={BeforeAdvice}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="After"
+        component={AfterAdvice}
         options={{headerShown: false}}
       />
 
