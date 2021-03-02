@@ -7,10 +7,6 @@ const SubmitData = async (name,age,height,weight,phone1,phone2) => {
     .set({
       Name: name,
       Age: age,
-      Height: height,
-      Weight: weight,
-      Phone1: phone1,
-      Phone2: phone2
     })
     .then(() => {
       console.log('post Added');
