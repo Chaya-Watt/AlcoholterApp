@@ -81,6 +81,4 @@ const BLE = () => {
     };
 };
 
-dsadsadsa
-dsadsadsadsad
 export default BLE;
