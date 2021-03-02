@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "747816666061",
+    "project_id": "alcoholter-app-62227",
+    "storage_bucket": "alcoholter-app-62227.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747816666061:android:b0db6b159923a65866ba84",
+        "android_client_info": {
+          "package_name": "com.alcoholterapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "747816666061-iijnhm1pum3bpgnbetq51fgvoefvs8gp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkVY-0tWMkxgcaJSi25I0FN3YtyAdNeNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "747816666061-iijnhm1pum3bpgnbetq51fgvoefvs8gp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
