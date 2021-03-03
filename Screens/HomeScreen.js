@@ -173,6 +173,7 @@ const HomeScreen = ({navigation}) => {
             <ButtonHomeScreen
               Icon={require('../Icons/help.png')}
               Title="คำแนะนำ"
+              onPress={() => {navigation.navigate('Advice');}}
             />
             <ButtonHomeScreen
               Icon={require('../Icons/bank.png')}
