@@ -14,6 +14,8 @@ import {AuthContext} from '../Navigation/AuthProvider';
 import {BleManager} from 'react-native-ble-plx';
 import base64 from 'react-native-base64';
 import ShareText from '../Component/ShareText'
+import openMap from 'react-native-open-maps'
+import Geolocation from '@react-native-community/geolocation';
 
 const manager = new BleManager();
 
@@ -21,6 +23,25 @@ const HomeScreen = ({navigation}) => {
   const [Data, setData] = useState(0);
   const [Device, setDevice] = useState("Don't Connect Device");
   const {user, logout} = useContext(AuthContext);
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [Error, setError] = useState(null);
+
+  const GoMap =()=>{
+    Geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+        setError(null);
+        console.log(latitude, longitude);
+      },
+      (error) => {
+        setError(error.message);
+        console.log(Error);
+      },
+    );
+    openMap({latitude: latitude, longitude: longitude});
+  }
 
   useEffect(() => {
     //Use useEffect for do onstateChange function
@@ -162,6 +183,7 @@ const HomeScreen = ({navigation}) => {
             <ButtonHomeScreen
               Icon={require('../Icons/location.png')}
               Title="เปิด Google Map"
+              onPress={()=>GoMap()}
             />
           </View>
           <View style={[styles.ContainerIcon, {marginBottom: 20}]}>
