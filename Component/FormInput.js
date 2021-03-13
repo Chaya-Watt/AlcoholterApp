@@ -2,10 +2,10 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import {Item,Input} from 'native-base'
 
-const FormInput = ({labelValue,placeholderText,box, ...props}) => {
+const FormInput = ({labelValue,placeholderText,box,outbox, ...props}) => {
     return (
         <View>
-            <Item rounded style={styles.RoundedForm}>
+            <Item rounded style={[styles.RoundedForm,outbox]}>
                <Input value={labelValue} style={[styles.textInput,box]} placeholder={placeholderText} {...props} />
             </Item>
         </View>
@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
         borderColor:'#fbd343',
         borderRadius:20,
         margin:25,
-
     },
     textInput:{
         color:'white',
