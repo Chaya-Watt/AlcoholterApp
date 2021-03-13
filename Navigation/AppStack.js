@@ -7,6 +7,7 @@ import ContactScreen from '../Screens/ContactScreen'
 import AdviceScreen from '../Screens/AdviceScreen'
 import BeforeAdvice from '../Screens/BeforeAdvice'
 import AfterAdvice from '../Screens/AfterAdvice'
+import ExpenseScreen from '../Screens/ExpenseScreen'
 
 
 const Stack = createStackNavigator();
@@ -48,6 +49,11 @@ const AppStack = () => {
       <Stack.Screen
         name="After"
         component={AfterAdvice}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Expense"
+        component={ExpenseScreen}
         options={{headerShown: false}}
       />
 
