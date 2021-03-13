@@ -34,6 +34,10 @@ const SignupScreen = () => {
         <View style={styles.Container}>
           <Text style={styles.HeaderText}>Create Account</Text>
           <View style={styles.PositionForm}>
+          <Image
+              style={[styles.userImg,{alignSelf:'center'}]}
+              source={require('../Pictures/Profile.jpg')}
+            />
             <FormInput
               labelValue={email}
               onChangeText={(userEmail) => setEmail(userEmail)}
@@ -216,5 +220,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginTop: 20,
     marginLeft: 5,
+  },
+  userImg: {
+    height: 100,
+    width: 100,
+    borderRadius: 75,
   },
 });
