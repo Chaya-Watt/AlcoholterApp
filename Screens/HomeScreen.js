@@ -178,6 +178,7 @@ const HomeScreen = ({navigation}) => {
             <ButtonHomeScreen
               Icon={require('../Icons/bank.png')}
               Title="ประวัติรายจ่าย"
+              onPress={() => {navigation.navigate('Expense');}}
             />
           </View>
         </View>
