@@ -16,6 +16,7 @@ import base64 from 'react-native-base64';
 import ShareText from '../Component/ShareText'
 import openMap from 'react-native-open-maps'
 import Geolocation from '@react-native-community/geolocation';
+import firestore from '@react-native-firebase/firestore';
 
 const manager = new BleManager();
 
@@ -26,6 +27,7 @@ const HomeScreen = ({navigation}) => {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [Error, setError] = useState(null);
+  const [userData,setUserData] = useState(null);
 
   const GoMap =()=>{
     Geolocation.getCurrentPosition(
@@ -42,6 +44,23 @@ const HomeScreen = ({navigation}) => {
     );
     openMap({latitude: latitude, longitude: longitude});
   }
+
+  const getUser = async()=>{
+  await firestore()
+    .collection('users')
+    .doc(user.uid)
+    .get()
+    .then((documentSnapshot)=>{
+      if(documentSnapshot.exists){
+        console.log('User Data',documentSnapshot.data())
+        setUserData(documentSnapshot.data())
+      }
+    })
+  }
+
+  useEffect(()=>{
+    getUser();
+  },[])
 
   // useEffect(() => {
   //   //Use useEffect for do onstateChange function
@@ -127,10 +146,10 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.Container}>
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity onPress={() => logout()}>
-              <Thumbnail small source={require('../Pictures/Profile.jpg')} />
+              <Thumbnail small source={{uri: userData ? userData.userImg : 'https://reactnative.dev/img/tiny_logo.png'}} />
             </TouchableOpacity>
             <Text style={styles.TextInHeader}>
-              Gene Nut Thee{'\n'}
+              {userData?userData.fname:'Test'}{'\n'}
               <View style={{flexDirection: 'row'}}>
                 <View style={styles.GreenIcon} />
                 <Text style={styles.SubName}>Device : {Device}</Text>

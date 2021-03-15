@@ -1,10 +1,10 @@
 import React, {createContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
-    
   const [user, setUser] = useState(null);
 
   return (
@@ -21,7 +21,22 @@ export const AuthProvider = ({children}) => {
         },
         register: async (email, password) => {
           try {
-            await auth().createUserWithEmailAndPassword(email, password);
+            await auth()
+              .createUserWithEmailAndPassword(email, password)
+              .then(() => {
+                firestore()
+                  .collection('users')
+                  .doc(auth().currentUser.uid)
+                  .set({
+                    name: '',
+                    email: email,
+                    createAt: firestore.Timestamp.fromDate(new Date()),
+                    userImg: null,
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              });
           } catch (error) {
             console.log(error);
           }
@@ -38,4 +53,3 @@ export const AuthProvider = ({children}) => {
     </AuthContext.Provider>
   );
 };
-

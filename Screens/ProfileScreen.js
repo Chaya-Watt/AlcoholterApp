@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
+  Alert,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,16 +21,109 @@ import FormSignUp from '../Component/FormSignUp';
 import FormInput from '../Component/FormInput';
 import SubmitData from '../Component/SubmitData';
 
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {AuthContext} from '../Navigation/AuthProvider';
+import { useEffect } from 'react/cjs/react.development';
 
 const ProfileScreen = ({navigation}) => {
-  const [name, setName] = useState();
-  const [age, setAge] = useState();
-  const [height, setHeight] = useState();
-  const [weight, setWeight] = useState();
-  const [phone1, setPhone1] = useState();
-  const [phone2, setPhone2] = useState();
-  const [image,setImage] = useState('https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png')
+  const [userData,setUserData] = useState(null);
+  const {user, logout} = useContext(AuthContext);
+  const [uploading,setUploading] = useState(false)
+  const [transferred,setTransferred] =useState(0);
+  const [image,setImage] = useState(null)
+
+
+  const getUser = async()=>{
+    const currentUser = await firestore()
+    .collection('users')
+    .doc(user.uid)
+    .get()
+    .then((documentSnapshot)=>{
+      if(documentSnapshot.exists){
+        console.log('User Data',documentSnapshot.data())
+        setUserData(documentSnapshot.data())
+      }
+    })
+  }
+
+  const handleUpdate = async()=>{
+    let imgUrl = await uploadImage();
+
+    if( imgUrl == null && userData.usetImg){
+      imgUrl = userData.userImg
+    }
+
+     firestore()
+     .collection('users')
+     .doc(user.uid)
+     .update({
+       fname: userData.fname,
+       age: userData.age,
+       height:userData.height,
+       weight:userData.weight,
+       phone1:userData.phone1,
+       phone2:userData.phone2,
+       userImg: imgUrl,
+     })
+     .then(()=>{
+       console.log('User Updated!')
+       Alert.alert(
+         'Profile Update!',
+         'Your profile has been updated successfully'
+       )
+     })
+  }
+
+  const uploadImage = async () => {
+    if(image == null){
+      return null
+    }
+    const uploadUri = image;
+    let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
+
+    //Add timestamp to File Name
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+
+    setUploading(true);
+    setTransferred(0);
+
+    const storageRef = storage().ref(`photos/${filename}`);
+    const task = storageRef.putFile(uploadUri);
+
+    //Set Transferred State
+    task.on('state_changed', (taskSnapshot) => {
+      console.log(
+        `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
+      );
+      setTransferred(
+        Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
+          100,
+      );
+    });
+
+    try {
+      await task;
+
+      const url = await storageRef.getDownloadURL();
+      setUploading(false);
+      setImage(null);
+      // Alert.alert(
+      //   'Post published!',
+      //   'Your post has been published Successfully!!',
+      // );
+      return url;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  useEffect(()=>{
+    getUser();
+  },[])
 
   const takePhotoFromCamera =()=>{
     ImagePicker.openCamera({
@@ -126,7 +220,7 @@ const ProfileScreen = ({navigation}) => {
                     width: 100,
                   }}
                   imageStyle={{borderRadius: 60}}
-                  source={{uri: image}}>
+                  source={{uri: image ? image: userData ?userData.userImg :'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png'}}>
                   <View
                     style={{
                       flex: 1,
@@ -150,6 +244,7 @@ const ProfileScreen = ({navigation}) => {
                 </ImageBackground>
               </View>
             </TouchableOpacity>
+            <Text style={{color:"#ffffff"}}>{user.uid}</Text>
 
             <View style={{flexDirection: 'row', marginTop: 25}}>
               <FontAwesome
@@ -158,8 +253,8 @@ const ProfileScreen = ({navigation}) => {
                 style={{color: '#ffffff', paddingTop: 23, paddingRight: 18}}
               />
               <FormInput
-                labelValue={name}
-                onChangeText={(userName) => setName(userName)}
+                labelValue={userData ? userData.fname:''}
+                onChangeText={(txt) => setUserData({...userData,fname:txt})}
                 placeholderText="Name"
                 outbox={{marginTop: 10, width: 250}}
                 box={{textAlign: 'center'}}
@@ -169,8 +264,8 @@ const ProfileScreen = ({navigation}) => {
             <FormSignUp
               Title="Age :"
               Unit="Years"
-              labelValue={age}
-              onChangeText={(userAge) => setAge(userAge)}
+              labelValue={userData ? userData.age:''}
+              onChangeText={(txt) => setUserData({...userData,age:txt})}
               box={{
                 marginTop: 10,
                 width: 100,
@@ -183,14 +278,14 @@ const ProfileScreen = ({navigation}) => {
             <FormSignUp
               Title="Height :"
               Unit="Cm"
-              labelValue={height}
-              onChangeText={(userHeight) => setHeight(userHeight)}
+              labelValue={userData ? userData.height:''}
+              onChangeText={(txt) => setUserData({...userData,height:txt})}
             />
             <FormSignUp
               Title="Weight :"
               Unit="Kg"
-              labelValue={weight}
-              onChangeText={(userWeight) => setWeight(userWeight)}
+              labelValue={userData ? userData.weight:''}
+              onChangeText={(txt) => setUserData({...userData,weight:txt})}
             />
           </Animated.View>
 
@@ -202,8 +297,8 @@ const ProfileScreen = ({navigation}) => {
             />
             <FormInput
               placeholderText="Phone Number 1"
-              labelValue={phone1}
-              onChangeText={(userPhone1) => setPhone1(userPhone1)}
+              labelValue={userData ? userData.phone1:''}
+              onChangeText={(txt) => setUserData({...userData,phone1:txt})}
               outbox={{marginTop: 10, width: 300}}
               box={{textAlign: 'center'}}
               keyboardType="number-pad"
@@ -218,8 +313,8 @@ const ProfileScreen = ({navigation}) => {
             />
             <FormInput
               placeholderText="Phone Number 2"
-              labelValue={phone2}
-              onChangeText={(userPhone2) => setPhone2(userPhone2)}
+              labelValue={userData ? userData.phone2:''}
+              onChangeText={(txt) => setUserData({...userData,phone2:txt})}
               outbox={{marginTop: 10, width: 300}}
               box={{textAlign: 'center'}}
               keyboardType="number-pad"
@@ -235,7 +330,7 @@ const ProfileScreen = ({navigation}) => {
                 height: 50,
                 margin:5
               }}
-              onPress={() => navigation.navigate('Home')}>
+              onPress={handleUpdate}>
               <Text
                 style={{
                   color: '#FFFFFF',

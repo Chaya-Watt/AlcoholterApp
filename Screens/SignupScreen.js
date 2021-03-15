@@ -133,7 +133,7 @@ const SignupScreen = () => {
               ButtonTitle="Sign Up"
               onPress={() => {
                 register(email, password);
-                SubmitData(name, age, height, weight, phone1, phone2);
+                // SubmitData(name, age, height, weight, phone1, phone2);
               }}
             />
           </View>
