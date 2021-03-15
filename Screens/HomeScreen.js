@@ -28,6 +28,7 @@ const HomeScreen = ({navigation}) => {
   const [longitude, setLongitude] = useState(0);
   const [Error, setError] = useState(null);
   const [userData,setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const GoMap =()=>{
     Geolocation.getCurrentPosition(
@@ -60,7 +61,8 @@ const HomeScreen = ({navigation}) => {
 
   useEffect(()=>{
     getUser();
-  },[])
+    navigation.addListener('focus',()=> setLoading(!loading))
+  },[navigation,loading])
 
   // useEffect(() => {
   //   //Use useEffect for do onstateChange function
@@ -146,10 +148,10 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.Container}>
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity onPress={() => logout()}>
-              <Thumbnail small source={{uri: userData ? userData.userImg : 'https://reactnative.dev/img/tiny_logo.png'}} />
+              <Thumbnail small source={{uri: userData ? userData.userImg : 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png'}} />
             </TouchableOpacity>
             <Text style={styles.TextInHeader}>
-              {userData?userData.fname:'Test'}{'\n'}
+              {userData ? userData.name:'Click Profile to Edit'}{'\n'}
               <View style={{flexDirection: 'row'}}>
                 <View style={styles.GreenIcon} />
                 <Text style={styles.SubName}>Device : {Device}</Text>

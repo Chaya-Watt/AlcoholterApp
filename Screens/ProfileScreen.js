@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext,useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -19,12 +19,10 @@ import ImagePicker from 'react-native-image-crop-picker';
 
 import FormSignUp from '../Component/FormSignUp';
 import FormInput from '../Component/FormInput';
-import SubmitData from '../Component/SubmitData';
 
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {AuthContext} from '../Navigation/AuthProvider';
-import { useEffect } from 'react/cjs/react.development';
 
 const ProfileScreen = ({navigation}) => {
   const [userData,setUserData] = useState(null);
@@ -50,7 +48,7 @@ const ProfileScreen = ({navigation}) => {
   const handleUpdate = async()=>{
     let imgUrl = await uploadImage();
 
-    if( imgUrl == null && userData.usetImg){
+    if( imgUrl == null && userData.userImg){
       imgUrl = userData.userImg
     }
 
@@ -58,7 +56,7 @@ const ProfileScreen = ({navigation}) => {
      .collection('users')
      .doc(user.uid)
      .update({
-       fname: userData.fname,
+       name: userData.name,
        age: userData.age,
        height:userData.height,
        weight:userData.weight,
@@ -244,7 +242,7 @@ const ProfileScreen = ({navigation}) => {
                 </ImageBackground>
               </View>
             </TouchableOpacity>
-            <Text style={{color:"#ffffff"}}>{user.uid}</Text>
+            {/* <Text style={{color:"#ffffff"}}>{user.uid}</Text> */}
 
             <View style={{flexDirection: 'row', marginTop: 25}}>
               <FontAwesome
@@ -253,8 +251,8 @@ const ProfileScreen = ({navigation}) => {
                 style={{color: '#ffffff', paddingTop: 23, paddingRight: 18}}
               />
               <FormInput
-                labelValue={userData ? userData.fname:''}
-                onChangeText={(txt) => setUserData({...userData,fname:txt})}
+                labelValue={userData ? userData.name:''}
+                onChangeText={(txt) => setUserData({...userData,name:txt})}
                 placeholderText="Name"
                 outbox={{marginTop: 10, width: 250}}
                 box={{textAlign: 'center'}}

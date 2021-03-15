@@ -28,10 +28,15 @@ export const AuthProvider = ({children}) => {
                   .collection('users')
                   .doc(auth().currentUser.uid)
                   .set({
-                    name: '',
+                    name: 'Click Profile to Edit',
                     email: email,
                     createAt: firestore.Timestamp.fromDate(new Date()),
-                    userImg: null,
+                    age:'',
+                    height:'',
+                    weight:'',
+                    phone1:'',
+                    phone2:'',
+                    userImg: 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png',
                   })
                   .catch((error) => {
                     console.log(error);
