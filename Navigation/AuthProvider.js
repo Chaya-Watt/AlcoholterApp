@@ -19,7 +19,7 @@ export const AuthProvider = ({children}) => {
             console.log(error);
           }
         },
-        register: async (email, password) => {
+        register: async (email, password, userData,image) => {
           try {
             await auth()
               .createUserWithEmailAndPassword(email, password)
@@ -28,15 +28,19 @@ export const AuthProvider = ({children}) => {
                   .collection('users')
                   .doc(auth().currentUser.uid)
                   .set({
-                    name: 'Click Profile to Edit',
+                    name: userData.name,
                     email: email,
                     createAt: firestore.Timestamp.fromDate(new Date()),
-                    age:'',
-                    height:'',
-                    weight:'',
-                    phone1:'',
-                    phone2:'',
-                    userImg: 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png',
+                    age: userData.age,
+                    height: userData.height,
+                    weight: userData.weight,
+                    phone1: userData.phone1,
+                    phone2: userData.phone2,
+                    userImg:
+                      image,
+                  })
+                  .then((f)=>{
+                    console.log("Sucess",f)
                   })
                   .catch((error) => {
                     console.log(error);

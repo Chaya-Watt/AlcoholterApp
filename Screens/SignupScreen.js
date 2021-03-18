@@ -249,8 +249,7 @@ const SignupScreen = () => {
               placeholderText="Comfirm Password"
               secureTextEntry={true}
             />
-          </Animated.View>
-          <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row'}}>
             <Text style={styles.TextSex}>Sex</Text>
             <TouchableOpacity
               onPress={() => {
@@ -322,13 +321,15 @@ const SignupScreen = () => {
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
             <FormButton
               ButtonTitle="Sign Up"
-              onPress={() => {
-                register(email, password);
+              onPress={async() => {
+                const regis = await register(email, password,userData,image);
                 // await handleUpdate();
                 // SubmitData(name, age, height, weight, phone1, phone2);
               }}
             />
           </View>
+          </Animated.View>
+          
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -417,5 +418,45 @@ const styles = StyleSheet.create({
     height: 100,
     width: 100,
     borderRadius: 75,
+  },
+  panelTitle: {
+    fontSize: 27,
+    height: 35,
+    color:'#ffffff',
+    fontFamily: 'Delius-Regular',
+  },
+  panel: {
+    padding: 25,
+    backgroundColor: '#000009',
+    paddingTop: 20,
+  },
+  panelSubtitle: {
+    fontSize: 14,
+    color: 'gray',
+    height: 30,
+    marginBottom: 10,
+    fontFamily: 'Delius-Regular',
+  },
+  panelButton: {
+    padding: 13,
+    borderRadius: 10,
+    backgroundColor: '#fbd343',
+    alignItems: 'center',
+    marginVertical: 7,
+    fontFamily: 'Delius-Regular',
+  },
+  panelButtonTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'white',
+    fontFamily: 'Delius-Regular',
+  },
+  panelButton: {
+    padding: 13,
+    borderRadius: 10,
+    backgroundColor: '#fbd343',
+    alignItems: 'center',
+    marginVertical: 7,
+    fontFamily: 'Delius-Regular',
   },
 });
