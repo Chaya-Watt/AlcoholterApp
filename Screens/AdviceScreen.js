@@ -6,7 +6,7 @@ import ButtonAdvice from '../Component/Advice/ButtonAdvice'
 const AdviceScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
-            <Header title='คำแนะนำ' />
+            <Header title='คำแนะนำา' />
             <View>
                 <ButtonAdvice 
                 title= 'ก่อนดื่มแอลกอฮอล์'
