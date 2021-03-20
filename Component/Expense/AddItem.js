@@ -21,7 +21,7 @@ const AddItem = ({addItem}) => {
 
     const handleConfirm = (date) => {
     setShowDate (moment(date).format('MMMM Do YYYY'))
-    console.warn("A date has been picked: ", date);
+    console.log("A date has been picked: ", date);
     hideDatePicker();
     };
 

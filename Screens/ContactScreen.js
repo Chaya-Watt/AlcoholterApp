@@ -1,31 +1,56 @@
-import React from 'react';
+import React,{useState,useEffect,useContext} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import Communications from 'react-native-communications';
+import firestore from '@react-native-firebase/firestore';
+import {AuthContext} from '../Navigation/AuthProvider';
 
-const ContactScreen = () => {
+const ContactScreen = ({navigation}) => {
+
+  const [userData,setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const {user, logout} = useContext(AuthContext);
+
+  const getUser = async()=>{
+    await firestore()
+      .collection('users')
+      .doc(user.uid)
+      .get()
+      .then((documentSnapshot)=>{
+        if(documentSnapshot.exists){
+          console.log('User Data',documentSnapshot.data())
+          setUserData(documentSnapshot.data())
+        }
+      })
+    }
+
+    useEffect(()=>{
+      getUser();
+      navigation.addListener('focus',()=> setLoading(!loading))
+    },[navigation,loading])
+
   return (
     <View style={styles.Container}>
       <Text style={styles.TextHeader}>เบอร์โทรติดต่อ</Text>
       <View style={{paddingTop: 60, alignItems: 'center'}}>
         <TouchableOpacity
-          onPress={() => Communications.phonecall('0959493994', true)}>
+          onPress={() => Communications.phonecall(userData.phone1, true)}>
           <Image
             source={require('../Icons/phone-call-contact.png')}
             style={styles.Icon}
           />
         </TouchableOpacity>
-        <Text style={styles.SubText}>เบอร์ที่ 1 : 0959493994</Text>
+        <Text style={styles.SubText}>เบอร์ที่ 1 : {userData? userData.phone1:''}</Text>
       </View>
 
       <View style={{paddingTop: 60, alignItems: 'center'}}>
         <TouchableOpacity
-          onPress={() => Communications.phonecall('0817212012', true)}>
+          onPress={() => Communications.phonecall(userData.phone2, true)}>
           <Image
             source={require('../Icons/phone-call-contact.png')}
             style={styles.Icon}
           />
         </TouchableOpacity>
-        <Text style={styles.SubText}>เบอร์ที่ 2 : 0817212012</Text>
+        <Text style={styles.SubText}>เบอร์ที่ 2 : {userData? userData.phone2:''}</Text>
       </View>
     </View>
   );
