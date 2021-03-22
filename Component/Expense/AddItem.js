@@ -1,12 +1,15 @@
-import React,{useState} from 'react'
-import {View, Text, StyleSheet,TextInput,TouchableOpacity,Image } from 'react-native'
+import React,{useState,useContext,useEffect} from 'react'
+import {View, Text, StyleSheet,TextInput,TouchableOpacity,Image,Alert } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment'
+import firestore from '@react-native-firebase/firestore';
+import {AuthContext} from '../../Navigation/AuthProvider';
 
-const AddItem = ({addItem}) => {
+const AddItem = () => {
 
     const [text, setText] = useState('');
     const [cost,setCost] = useState('');
+    const {user, logout} = useContext(AuthContext);
 
     //Date pinker
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -25,6 +28,28 @@ const AddItem = ({addItem}) => {
     hideDatePicker();
     };
 
+    const handleUpdate = async()=>{
+
+       firestore()
+       .collection('values')
+       .add({
+        userId: user.uid,
+        Detail: text,
+        Cost: cost,
+        postTime: firestore.Timestamp.fromDate(new Date()), // Get Times from FireStore
+       })
+       .then(()=>{
+         console.log('User Updated!')
+         Alert.alert(
+           'Values UpDate!',
+           'Your Values has been updated successfully'
+         )
+       })
+       .catch((error)=>{
+          console.log(error)
+       })
+    }
+
   return(
     <View style={{marginTop: 20}}>
         <Text style={styles.btext}>วัน/เดือน/ปี  :</Text>
@@ -40,7 +65,7 @@ const AddItem = ({addItem}) => {
         <Text style={styles.daytext}>{showDate}</Text>
         <Text style={styles.btext}>รายละเอียด : </Text>
         <TextInput 
-          placeholder='  ไปกินเหล้ากับเพื่อน' 
+          placeholder='' 
           maxLength={20}
           placeholderTextColor = "white"
           style={styles.input1}
@@ -48,12 +73,12 @@ const AddItem = ({addItem}) => {
         <Text style={styles.btext}>ค่าใช้จ่าย  : </Text>
         <TextInput 
           keyboardType = 'numeric'
-          placeholder='  585 บาท' 
+          placeholder='' 
           placeholderTextColor = "white"
           style={styles.input2}
           onChangeText={costValue => setCost(costValue)} />
         <TouchableOpacity style={styles.btn} 
-            onPress={() => addItem(showDate,text,cost)}>
+            onPress={handleUpdate}>
             <Text style={styles.btnText}>
               บันทึก
             </Text>

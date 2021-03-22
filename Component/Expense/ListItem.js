@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useContext } from "react";
 import {
   View,
   Text,
@@ -6,19 +6,27 @@ import {
   TouchableOpacity,
 } from "react-native";
 import DeleteButton from './DeleteButton'
+// import {AuthContext} from '../Navigation/AuthProvider';
+import moment from 'moment'
 
-const ListItem = ({ item, deleteItem}) => {
+const ListItem = ({item}) => {
 
-  console.log(item)
+  // const {user, logout} = useContext(AuthContext);
+  const [userValues, setUserValues] = useState(null);
+
+  useEffect(()=>{
+    console.log(item)
+  })
+  
 
   return (
     <TouchableOpacity style={styles.listItem}>
       <View style={styles.listItemView}>
-        <Text style={styles.listItemText}>{item.showDate}</Text>
-        <Text style={styles.listItemText}>{item.text}</Text>
-        <Text style={styles.listItemText}>{item.cost}</Text>
+        <Text style={styles.listItemText}>{moment(item.postTime.toDate()).format("MMM Do YY")}</Text>
+        <Text style={styles.listItemText}>{item.Detail}</Text>
+        <Text style={styles.listItemText}>{item.Cost}</Text>
        
-          <DeleteButton item={item} deleteItem={deleteItem}/>
+          <DeleteButton item={item}/>
         
       </View>
     </TouchableOpacity>
