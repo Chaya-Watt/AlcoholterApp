@@ -64,7 +64,7 @@ const HomeScreen = ({navigation}) => {
     navigation.addListener('focus',()=> setLoading(!loading))
   },[navigation,loading])
 
-  // useEffect(() => {
+  // useEffect(() => { 
   //   //Use useEffect for do onstateChange function
   //   const subscription = manager.onStateChange((state) => {
   //     manager.enable();
