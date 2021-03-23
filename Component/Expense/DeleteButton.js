@@ -4,8 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 
 const DeleteButton = ({item}) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [deleted, setDeleted] = useState(false);
-
+ 
   const deleteFirestoreData = (postId) => {
     firestore()
       .collection('values')
@@ -17,8 +16,10 @@ const DeleteButton = ({item}) => {
           'Your post has been deleted Successfully!!',
         );
       })
+      
       .catch((error) => console.log('Error deleting post', error));
   };
+
 
   return (
     <View>
@@ -34,7 +35,11 @@ const DeleteButton = ({item}) => {
             <Text style={styles.modalText1}>คุณแน่ใจหรือว่าต้องการลบ?</Text>
             <Pressable
               style={[styles.button1, styles.buttonDelete]}
-              onPress={() => deleteFirestoreData(item.id)}
+              onPress={() => {
+                deleteFirestoreData(item.id)
+                setModalVisible(!modalVisible)
+              }
+              }
             >
               <Text style={styles.textStyle}>ลบ</Text>
             </Pressable>
