@@ -45,7 +45,7 @@ const HomeScreen = ({navigation}) => {
     );
     openMap({latitude: latitude, longitude: longitude});
   }
-
+//Commenttt
   const getUser = async()=>{
   await firestore()
     .collection('users')
