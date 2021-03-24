@@ -17,6 +17,8 @@ import ShareText from '../Component/ShareText'
 import openMap from 'react-native-open-maps'
 import Geolocation from '@react-native-community/geolocation';
 import firestore from '@react-native-firebase/firestore';
+import ButtonInformation from '../Component/ButtonInformation'
+import ButtonAlcohol from '../Component/ButtonAlcohol'
 
 const manager = new BleManager();
 
@@ -147,7 +149,7 @@ const HomeScreen = ({navigation}) => {
       <ScrollView>
         <View style={styles.Container}>
           <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity onPress={() => logout()}>
+            <TouchableOpacity onPress={() => navigation.openDrawer()}>
               <Thumbnail small source={{uri: userData ? userData.userImg : 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png'}} />
             </TouchableOpacity>
             <Text style={styles.TextInHeader}>
@@ -177,19 +179,10 @@ const HomeScreen = ({navigation}) => {
 
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.TextYellow}>คำนวนเวลา :</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-              <Image
-                source={require('../Icons/information.png')}
-                style={{
-                  width: 15,
-                  height: 15,
-                  marginTop: 30,
-                  marginLeft: 260,
-                }}
-              />
-            </TouchableOpacity>
+            <ButtonInformation/>
           </View>
           <Text style={[styles.TextYellow, {marginBottom: 10}]}>อาการ :</Text>
+          <ButtonAlcohol/>
           <View style={styles.ContainerIcon}>
             <ButtonHomeScreen
               Icon={require('../Icons/phone-call.png')}
