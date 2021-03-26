@@ -19,14 +19,14 @@ export const AuthProvider = ({children}) => {
             console.log(error);
           }
         },
-        register: async (email, password, userData,image) => {
+        register: async (email, password,userData,image) => {
           try {
             await auth()
               .createUserWithEmailAndPassword(email, password)
               .then(() => {
                 firestore()
                   .collection('users')
-                  .doc(auth().currentUser.uid)
+                  .doc(auth().currentUser.email)
                   .set({
                     name: userData.name,
                     email: email,

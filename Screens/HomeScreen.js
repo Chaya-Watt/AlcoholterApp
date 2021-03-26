@@ -23,7 +23,7 @@ const manager = new BleManager();
 const HomeScreen = ({navigation}) => {
   const [Data, setData] = useState(0);
   const [Device, setDevice] = useState("Don't Connect Device");
-  const {user, logout} = useContext(AuthContext);
+  const {user,logout} = useContext(AuthContext);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [Error, setError] = useState(null);
@@ -49,17 +49,18 @@ const HomeScreen = ({navigation}) => {
   const getUser = async()=>{
   await firestore()
     .collection('users')
-    .doc(user.uid)
+    .doc(user.email)
     .get()
     .then((documentSnapshot)=>{
       if(documentSnapshot.exists){
-        console.log('User Data',documentSnapshot.data())
+        // console.log('User Data',documentSnapshot.data())
         setUserData(documentSnapshot.data())
       }
     })
   }
 
   useEffect(()=>{
+    // console.log('userEmail : ',user.email)
     getUser();
     navigation.addListener('focus',()=> setLoading(!loading))
   },[navigation,loading])

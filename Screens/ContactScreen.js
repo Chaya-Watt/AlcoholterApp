@@ -8,16 +8,16 @@ const ContactScreen = ({navigation}) => {
 
   const [userData,setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const {user, logout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
 
   const getUser = async()=>{
     await firestore()
       .collection('users')
-      .doc(user.uid)
+      .doc(user.email)
       .get()
       .then((documentSnapshot)=>{
         if(documentSnapshot.exists){
-          console.log('User Data',documentSnapshot.data())
+          // console.log('User Data',documentSnapshot.data())
           setUserData(documentSnapshot.data())
         }
       })

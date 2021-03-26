@@ -1,11 +1,10 @@
-import React, {useState, useContext,useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   StyleSheet,
   Text,
   View,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   ImageBackground,
 } from 'react-native';
@@ -13,12 +12,9 @@ import {AuthContext} from '../Navigation/AuthProvider';
 import FormInput from '../Component/FormInput';
 import FormButton from '../Component/FormButton';
 import FormSignUp from '../Component/FormSignUp'
-import SubmitData from '../Component/SubmitData'
 import BottomSheet from 'reanimated-bottom-sheet';
 import Animated from 'react-native-reanimated';
 import ImagePicker from 'react-native-image-crop-picker';
-import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const SignupScreen = () => {
@@ -30,83 +26,7 @@ const SignupScreen = () => {
   // const [transferred,setTransferred] =useState(0);
   const [image,setImage] = useState(null)
 
-  const {register,user} = useContext(AuthContext);
-
-
-  // const handleUpdate = async()=>{
-  //   let imgUrl = await uploadImage();
-
-  //   if( imgUrl == null && userData.userImg){
-  //     imgUrl = userData.userImg
-  //   }
-
-  //    firestore()
-  //    .collection('users')
-  //    .doc(user.uid)
-  //    .update({
-  //      name: userData.name,
-  //      age: userData.age,
-  //      height:userData.height,
-  //      weight:userData.weight,
-  //      phone1:userData.phone1,
-  //      phone2:userData.phone2,
-  //      userImg: imgUrl,
-  //    })
-  //    .then(()=>{
-  //      console.log('User Updated!')
-  //      Alert.alert(
-  //        'Profile Update!',
-  //        'Your profile has been updated successfully'
-  //      )
-  //    })
-  // }
-
-  // const uploadImage = async () => {
-  //   if(image == null){
-  //     return null
-  //   }
-  //   const uploadUri = image;
-  //   let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
-
-  //   //Add timestamp to File Name
-  //   const extension = filename.split('.').pop();
-  //   const name = filename.split('.').slice(0, -1).join('.');
-  //   filename = name + Date.now() + '.' + extension;
-
-  //   setUploading(true);
-  //   setTransferred(0);
-
-  //   const storageRef = storage().ref(`photos/${filename}`);
-  //   const task = storageRef.putFile(uploadUri);
-
-  //   //Set Transferred State
-  //   task.on('state_changed', (taskSnapshot) => {
-  //     console.log(
-  //       `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
-  //     );
-  //     setTransferred(
-  //       Math.round(taskSnapshot.bytesTransferred / taskSnapshot.totalBytes) *
-  //         100,
-  //     );
-  //   });
-
-  //   try {
-  //     await task;
-
-  //     const url = await storageRef.getDownloadURL();
-  //     setUploading(false);
-  //     setImage(null);
-  //     // Alert.alert(
-  //     //   'Post published!',
-  //     //   'Your post has been published Successfully!!',
-  //     // );
-  //     return url;
-  //   } catch (error) {
-  //     console.log(error);
-  //     return null;
-  //   }
-  // };
-
+  const {register} = useContext(AuthContext);
 
   const takePhotoFromCamera =()=>{
     ImagePicker.openCamera({
@@ -231,7 +151,9 @@ const SignupScreen = () => {
             </TouchableOpacity>
             <FormInput
               labelValue={email}
-              onChangeText={(userEmail) => setEmail(userEmail)}
+              onChangeText={(Email) => {
+                setEmail(Email)
+              }}
               placeholderText="Email"
               keyboardType="email-address"
             />
@@ -323,8 +245,6 @@ const SignupScreen = () => {
               ButtonTitle="Sign Up"
               onPress={async() => {
                 const regis = await register(email, password,userData,image);
-                // await handleUpdate();
-                // SubmitData(name, age, height, weight, phone1, phone2);
               }}
             />
           </View>
