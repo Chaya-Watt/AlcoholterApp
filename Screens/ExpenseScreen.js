@@ -11,7 +11,9 @@ const ExpenseScreen = ({navigation, route}) => {
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
   const {user} = useContext(AuthContext);
-
+  const [button, setButton] = useState(false);
+  const [trigger,setTrigger] = useState(false);
+  
   // const fetchValues = async () => {
   //   try {
   //     const list = []; //Create Empty Array for get data from firestore
@@ -74,9 +76,8 @@ const ExpenseScreen = ({navigation, route}) => {
           .then((querySnapshot) => {
             const { History } = querySnapshot.data();
             console.log('QuerySnapshot Data: ',History)
-            setValues(History);
+            setValues(History.reverse());
           });
-
 
         if (loading) {
           setLoading(false);
@@ -88,12 +89,12 @@ const ExpenseScreen = ({navigation, route}) => {
     };
 
     fetchValues();
-  }, []);
+  }, [trigger]);
 
   return (
     <View style={styles.container}>
       <Header title="ประวัติรายจ่าย" />
-      <AddItem History={values} navigation={navigation}/>
+      <AddItem History={values} navigation={navigation} trigger={{trigger,setTrigger}}/>
       <View
         style={{
           height: 60,
@@ -111,6 +112,7 @@ const ExpenseScreen = ({navigation, route}) => {
         data={values}
         renderItem={({item}) => <ListItem item={item} />}
         keyExtractor={(item) => item.Time.toString()}
+        // inverted={true}
       />
     </View>
   );

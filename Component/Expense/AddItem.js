@@ -5,8 +5,8 @@ import moment from 'moment'
 import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../../Navigation/AuthProvider';
 
-const AddItem = ({History,navigation}) => {
-    const [userValues,setUesrValues] = useState();
+const AddItem = ({History,navigation,trigger}) => {
+    const [userValues,setUesrValues] = useState({Detail:'',Cost:''});
     const [text, setText] = useState([]);
     const [cost,setCost] = useState([]);
     const {user} = useContext(AuthContext);
@@ -35,11 +35,7 @@ const AddItem = ({History,navigation}) => {
         .collection('values')
         .doc(user.email)
         .set({
-          History:[userValues]
-         // userId: user.uid,
-         // Detail: userValues.Detail,
-         // Cost: userValues.Cost,
-         // postTime: firestore.Timestamp.fromDate(new Date()), // Get Times from FireStore
+          History:[{...userValues,Time:firestore.Timestamp.fromDate(new Date())}]
         })
         .then(()=>{
           console.log('User Updated!')
@@ -47,6 +43,8 @@ const AddItem = ({History,navigation}) => {
             'Values UpDate!',
             'Your Values has been updated successfully'
           )
+          trigger.setTrigger(true)
+          setUesrValues('')
           // navigation.navigate('Home')
         })
         .catch((error)=>{
@@ -59,11 +57,7 @@ const AddItem = ({History,navigation}) => {
         .collection('values')
         .doc(user.email)
         .update({
-          History:[userValues,...History]
-         // userId: user.uid,
-         // Detail: userValues.Detail,
-         // Cost: userValues.Cost,
-         // postTime: firestore.Timestamp.fromDate(new Date()), // Get Times from FireStore
+          History:firestore.FieldValue.arrayUnion({...userValues,Time:firestore.Timestamp.fromDate(new Date())})
         })
         .then(()=>{
           console.log('User Updated!')
@@ -71,7 +65,8 @@ const AddItem = ({History,navigation}) => {
             'Values UpDate!',
             'Your Values has been updated successfully'
           )
-          // navigation.navigate('Home')
+          trigger.setTrigger(!trigger.trigger)
+          setUesrValues('')
         })
         .catch((error)=>{
            console.log(error)
@@ -98,13 +93,15 @@ const AddItem = ({History,navigation}) => {
         <Text style={styles.daytext}>{showDate}</Text>
         <Text style={styles.btext}>รายละเอียด : </Text>
         <TextInput 
+          value ={userValues.Detail}
           placeholder='' 
           maxLength={20}
           placeholderTextColor = "white"
           style={styles.input1}
           onChangeText={textValue => setUesrValues({...userValues,Detail:textValue})} />
         <Text style={styles.btext}>ค่าใช้จ่าย  : </Text>
-        <TextInput 
+        <TextInput
+          value ={userValues.Cost}
           keyboardType = 'numeric'
           placeholder='' 
           placeholderTextColor = "white"
