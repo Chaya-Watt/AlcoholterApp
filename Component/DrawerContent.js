@@ -25,7 +25,7 @@ const DrawerContent = (props,{navigation}) => {
   const getUser = async()=>{
     await firestore()
       .collection('users')
-      .doc(user.uid)
+      .doc(user.email)
       .get()
       .then((documentSnapshot)=>{
         if(documentSnapshot.exists){

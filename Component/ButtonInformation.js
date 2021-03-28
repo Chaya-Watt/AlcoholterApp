@@ -4,7 +4,7 @@ import { Modal, StyleSheet, Text, Pressable, View, Image } from "react-native";
 const ButtonInformation = () => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <View style={{marginTop:30, marginLeft:255}}>
+    <View style={{marginLeft:28,marginTop:30}}>
       <Modal
         animationType="slide"
         transparent={true}
@@ -20,7 +20,6 @@ const ButtonInformation = () => {
               onPress={() => setModalVisible(!modalVisible)}
             >
               <Text style={styles.textStyle}>ปิด</Text>
-              <Text style={styles.textStyle}>ปิด</Text>
             </Pressable>
           </View>
         </View>
@@ -31,8 +30,8 @@ const ButtonInformation = () => {
         <Image
                 source={require('../Icons/information.png')}
                 style={{
-                  width: 15,
-                  height: 15
+                  width: 18,
+                  height: 18
                 }}
               />
       </Pressable>
@@ -44,9 +43,7 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-    
+    alignItems: "center"
   },
   modalView: {
     margin: 20,

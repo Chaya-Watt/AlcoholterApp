@@ -67,11 +67,11 @@ const CalculateTime = ({Data})=> {
 
 const styles = StyleSheet.create({
   container: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#ffffff',
   },
   container1: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#FF0000',
   }
 

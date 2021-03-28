@@ -4,7 +4,7 @@ import { Modal, StyleSheet, Text, Pressable, View, Image } from "react-native";
 const ButtonAlcohol = () => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <View style={{marginTop: -25,marginLeft: 350 }}>
+    <View style={{marginLeft: 28,marginTop:26}}>
       <Modal
         animationType="slide"
         transparent={true}
@@ -37,8 +37,8 @@ const ButtonAlcohol = () => {
         <Image
                 source={require('../Icons/information.png')}
                 style={{
-                  width: 15,
-                  height: 15
+                  width: 18,
+                  height: 18
                 }}
               />
       </Pressable>
