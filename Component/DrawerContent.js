@@ -69,7 +69,7 @@ const DrawerContent = (props,{navigation}) => {
                                     size={size}
                                 />
                             )}
-                            label="Account edit" 
+                            label="Edit account" 
                             onPress={() => {props.navigation.navigate('Profile')}} />
                         <DrawerItem 
                             inactiveTintColor='#000'
@@ -80,7 +80,7 @@ const DrawerContent = (props,{navigation}) => {
                                     size={size}
                                 />
                             )}
-                            label="Sign Out" 
+                            label="Sign out" 
                             onPress={() => logout()} />
 
                     </Drawer.Section>
