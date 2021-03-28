@@ -75,9 +75,9 @@ const HomeScreen = ({navigation}) => {
       })
   };
 
-  // useEffect(()=>{
-  //   upDateAlcohol();
-  // },[Data])
+  useEffect(()=>{
+    upDateAlcohol();
+  },[Data])
 
   useEffect(() => {
     //Use useEffect for do onstateChange function
