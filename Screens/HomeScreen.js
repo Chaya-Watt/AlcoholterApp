@@ -20,6 +20,8 @@ import firestore from '@react-native-firebase/firestore';
 import CalculateLaw from '../Component/CalculateLaw';
 import Symptom from '../Component/CalculateSymptom';
 import CalculateTime from '../Component/CalculateTime'
+import ButtonInformation from '../Component/ButtonInformation'
+import ButtonAlcohol from '../Component/ButtonAlcohol'
 
 const manager = new BleManager();
 
@@ -199,15 +201,8 @@ const HomeScreen = ({navigation}) => {
       <ScrollView>
         <View style={styles.Container}>
           <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity onPress={() => logout()}>
-              <Thumbnail
-                small
-                source={{
-                  uri: userData
-                    ? userData.userImg
-                    : 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png',
-                }}
-              />
+            <TouchableOpacity onPress={() => navigation.openDrawer()}>
+              <Thumbnail small source={{uri: userData ? userData.userImg : 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png'}} />
             </TouchableOpacity>
             <Text style={styles.TextInHeader}>
               {userData ? userData.name : 'Click Profile to Edit'}
@@ -237,18 +232,8 @@ const HomeScreen = ({navigation}) => {
 
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.TextYellow}>คำนวนเวลา :</Text>
-            <Text style={[styles.TextYellow,{height:10,width:200}]}><CalculateTime Data={Data}/></Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-              <Image
-                source={require('../Icons/information.png')}
-                style={{
-                  width: 15,
-                  height: 15,
-                  marginTop: 30,
-                  marginLeft: 20,
-                }}
-              />
-            </TouchableOpacity>
+            <Text style={[styles.TextYellow,{height:20,width:200}]}><CalculateTime Data={Data}/></Text>
+            <ButtonInformation/>
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text
@@ -258,14 +243,14 @@ const HomeScreen = ({navigation}) => {
               ]}>
               อาการ :
             </Text>
-
             <Text
               style={[
                 styles.TextYellow,
-                {marginBottom: 10, flexDirection: 'row', marginLeft:50,color:'#ffffff',height:20,width:200},
+                {marginBottom: 10, flexDirection: 'row', marginLeft:52,color:'#ffffff',height:20,width:200},
               ]}>
               <Symptom Data={Data} />
             </Text>
+            <ButtonAlcohol/>
           </View>
 
           <View style={styles.ContainerIcon}>
@@ -377,7 +362,7 @@ const styles = StyleSheet.create({
   TextYellow: {
     color: '#FBD343',
     marginLeft: 20,
-    fontSize: 14,
+    fontSize: 15,
     marginTop: 25,
     alignItems: 'stretch',
   },

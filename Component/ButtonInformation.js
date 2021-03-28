@@ -4,7 +4,7 @@ import { Modal, StyleSheet, Text, Pressable, View, Image } from "react-native";
 const ButtonInformation = () => {
   const [modalVisible, setModalVisible] = useState(false);
   return (
-    <View>
+    <View style={{marginTop:30, marginLeft:255}}>
       <Modal
         animationType="slide"
         transparent={true}
@@ -31,8 +31,8 @@ const ButtonInformation = () => {
         <Image
                 source={require('../Icons/information.png')}
                 style={{
-                  width: 20,
-                  height: 20
+                  width: 15,
+                  height: 15
                 }}
               />
       </Pressable>
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ButtonImformation;
+export default ButtonInformation;
