@@ -5,11 +5,11 @@ import moment from 'moment'
 import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../../Navigation/AuthProvider';
 
-const AddItem = () => {
-
-    const [text, setText] = useState('');
-    const [cost,setCost] = useState('');
-    const {user, logout} = useContext(AuthContext);
+const AddItem = ({History,navigation,trigger}) => {
+    const [userValues,setUesrValues] = useState({Detail:'',Cost:''});
+    const [text, setText] = useState([]);
+    const [cost,setCost] = useState([]);
+    const {user} = useContext(AuthContext);
 
     //Date pinker
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -30,30 +30,58 @@ const AddItem = () => {
 
     const handleUpdate = async()=>{
 
-       firestore()
-       .collection('values')
-       .add({
-        userId: user.uid,
-        Detail: text,
-        Cost: cost,
-        postTime: firestore.Timestamp.fromDate(new Date()), // Get Times from FireStore
-       })
-       .then(()=>{
-         console.log('User Updated!')
-         Alert.alert(
-           'Values UpDate!',
-           'Your Values has been updated successfully'
-         )
-       })
-       .catch((error)=>{
-          console.log(error)
-       })
+      // if(History.length === 0){
+      //    firestore()
+      //   .collection('values expense')
+      //   .doc(user.email)
+      //   .set({
+      //     History:[{...userValues,Time:firestore.Timestamp.fromDate(new Date())}]
+      //   })
+      //   .then(()=>{
+      //     console.log('User Updated!')
+      //     Alert.alert(
+      //       'Values UpDate!',
+      //       'Your Values has been updated successfully'
+      //     )
+      //     trigger.setTrigger(true)
+      //     setUesrValues('')
+      //     // navigation.navigate('Home')
+      //   })
+      //   .catch((error)=>{
+      //      console.log(error)
+      //   })
+      // }
+      
+      //  if(History.length > 0){
+         firestore()
+        .collection('values')
+        .doc(user.email)
+        .update({
+          History:firestore.FieldValue.arrayUnion({...userValues,Time:firestore.Timestamp.fromDate(new Date())})
+        })
+        .then(()=>{
+          console.log('User Updated!')
+          Alert.alert(
+            'Values UpDate!',
+            'Your Values has been updated successfully'
+          )
+          trigger.setTrigger(!trigger.trigger)
+          setUesrValues('')
+        })
+        .catch((error)=>{
+           console.log(error)
+        })
+      // }
+    }
+
+    const updateTime =()=>{
+      setUesrValues({...userValues,Time:firestore.Timestamp.fromDate(new Date())})
     }
 
   return(
     <View style={{marginTop: 20}}>
         <Text style={styles.btext}>วัน/เดือน/ปี  :</Text>
-        <TouchableOpacity style={styles.button} onPress={showDatePicker} >
+        <TouchableOpacity style={styles.button} onPress={updateTime} >
           <Image style={{width:40,height:40}} source={require('../../Icons/calendar.png')} />
         </TouchableOpacity>
         <DateTimePickerModal
@@ -65,25 +93,26 @@ const AddItem = () => {
         <Text style={styles.daytext}>{showDate}</Text>
         <Text style={styles.btext}>รายละเอียด : </Text>
         <TextInput 
+          value ={userValues.Detail}
           placeholder='' 
           maxLength={20}
           placeholderTextColor = "white"
           style={styles.input1}
-          onChangeText={textValue => setText(textValue)} />
+          onChangeText={textValue => setUesrValues({...userValues,Detail:textValue})} />
         <Text style={styles.btext}>ค่าใช้จ่าย  : </Text>
-        <TextInput 
+        <TextInput
+          value ={userValues.Cost}
           keyboardType = 'numeric'
           placeholder='' 
           placeholderTextColor = "white"
           style={styles.input2}
-          onChangeText={costValue => setCost(costValue)} />
+          onChangeText={costValue => setUesrValues({...userValues,Cost:costValue})} />
         <TouchableOpacity style={styles.btn} 
             onPress={handleUpdate}>
             <Text style={styles.btnText}>
               บันทึก
             </Text>
         </TouchableOpacity> 
-
     </View>
   )
 }

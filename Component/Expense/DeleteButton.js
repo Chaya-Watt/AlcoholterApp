@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { Alert, Modal, StyleSheet, Text, Pressable, View, Image } from "react-native";
 import firestore from '@react-native-firebase/firestore';
+import {AuthContext} from '../../Navigation/AuthProvider';
 
-const DeleteButton = ({item}) => {
+const DeleteButton = ({item,route}) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const {user} = useContext(AuthContext);
  
   const deleteFirestoreData = (postId) => {
     firestore()
       .collection('values')
-      .doc(postId)
+      .doc(user.email)
+      .where('Time','==',)
       .delete()
       .then(() => {
         Alert.alert(

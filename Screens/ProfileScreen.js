@@ -26,7 +26,7 @@ import {AuthContext} from '../Navigation/AuthProvider';
 
 const ProfileScreen = ({navigation}) => {
   const [userData,setUserData] = useState(null);
-  const {user, logout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const [uploading,setUploading] = useState(false)
   const [transferred,setTransferred] =useState(0);
   const [image,setImage] = useState(null)
@@ -35,11 +35,11 @@ const ProfileScreen = ({navigation}) => {
   const getUser = async()=>{
     const currentUser = await firestore()
     .collection('users')
-    .doc(user.uid)
+    .doc(user.email)
     .get()
     .then((documentSnapshot)=>{
       if(documentSnapshot.exists){
-        console.log('User Data',documentSnapshot.data())
+        // console.log('User Data',documentSnapshot.data())
         setUserData(documentSnapshot.data())
       }
     })
@@ -54,7 +54,7 @@ const ProfileScreen = ({navigation}) => {
 
      firestore()
      .collection('users')
-     .doc(user.uid)
+     .doc(user.email)
      .update({
        name: userData.name,
        age: userData.age,
@@ -242,8 +242,6 @@ const ProfileScreen = ({navigation}) => {
                 </ImageBackground>
               </View>
             </TouchableOpacity>
-            {/* <Text style={{color:"#ffffff"}}>{user.uid}</Text> */}
-
             <View style={{flexDirection: 'row', marginTop: 25}}>
               <FontAwesome
                 name="user-o"

@@ -8,29 +8,34 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {Thumbnail} from 'native-base';
+import {Button, Thumbnail} from 'native-base';
 import ButtonHomeScreen from '../Component/ButtonHomeScreen';
 import {AuthContext} from '../Navigation/AuthProvider';
 import {BleManager} from 'react-native-ble-plx';
 import base64 from 'react-native-base64';
-import ShareText from '../Component/ShareText'
-import openMap from 'react-native-open-maps'
+import ShareText from '../Component/ShareText';
+import openMap from 'react-native-open-maps';
 import Geolocation from '@react-native-community/geolocation';
 import firestore from '@react-native-firebase/firestore';
+import CalculateLaw from '../Component/CalculateLaw';
+import Symptom from '../Component/CalculateSymptom';
+import CalculateTime from '../Component/CalculateTime'
 
 const manager = new BleManager();
 
 const HomeScreen = ({navigation}) => {
   const [Data, setData] = useState(0);
-  const [Device, setDevice] = useState("Don't Connect Device");
+  const [Device, setDevice] = useState("Device Don't Connect");
+  const [status, setStatus] = useState(false);
   const {user, logout} = useContext(AuthContext);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [Error, setError] = useState(null);
-  const [userData,setUserData] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [values, setValues] = useState([]);
 
-  const GoMap =()=>{
+  const GoMap = () => {
     Geolocation.getCurrentPosition(
       (position) => {
         setLatitude(position.coords.latitude);
@@ -44,25 +49,61 @@ const HomeScreen = ({navigation}) => {
       },
     );
     openMap({latitude: latitude, longitude: longitude});
-  }
+  };
 
-  const getUser = async()=>{
-  await firestore()
-    .collection('users')
-    .doc(user.uid)
-    .get()
-    .then((documentSnapshot)=>{
-      if(documentSnapshot.exists){
-        console.log('User Data',documentSnapshot.data())
-        setUserData(documentSnapshot.data())
-      }
-    })
-  }
+  const getUser = async () => {
+    await firestore()
+      .collection('users')
+      .doc(user.email)
+      .get()
+      .then((documentSnapshot) => {
+        if (documentSnapshot.exists) {
+          // console.log('User Profile: ',documentSnapshot.data())
+          setUserData(documentSnapshot.data());
+        }
+      });
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     getUser();
-    navigation.addListener('focus',()=> setLoading(!loading))
-  },[navigation,loading])
+    navigation.addListener('focus', () => setLoading(!loading));
+  }, [navigation, loading]);
+
+  const upDateAlcohol = async () => {
+    firestore()
+      .collection('values')
+      .doc(user.email)
+      .update({
+        Alcohol: firestore.FieldValue.arrayUnion({
+          Data,
+          Time: firestore.Timestamp.fromDate(new Date()),
+        }),
+      });
+  };
+
+  useEffect(() => {
+    upDateAlcohol();
+  }, [Data]);
+
+  useEffect(() => {
+    //Use useEffect for do onstateChange function
+    const subscription = manager.onStateChange((state) => {
+      manager.enable();
+      if (state === 'PoweredOn') {
+        console.log(state);
+        scanAndConnect();
+        subscription.remove();
+      }
+    }, true);
+    return () => {
+      console.log('Out');
+      clearInterval(TimerReadData);
+      setDevice("Device Don't Connect");
+      setStatus(false);
+      manager.cancelDeviceConnection('24:0A:C4:59:39:CE');
+      manager.disable();
+    };
+  }, []);
 
   useEffect(() => { 
     //Use useEffect for do onstateChange function
@@ -87,7 +128,7 @@ const HomeScreen = ({navigation}) => {
     //Scan Device
     {
       console.log('Scan...Device');
-      setDevice('Scan Device');
+      setDevice("Don't Connect Device");
       manager.startDeviceScan(null, null, (error, device) => {
         if (error) {
           console.log(error);
@@ -103,6 +144,7 @@ const HomeScreen = ({navigation}) => {
             .then((deviceDis) => {
               //Discover device all service and characteristics
               console.log('Discover All Services And Characteristics');
+              setStatus(true);
               return deviceDis.discoverAllServicesAndCharacteristics();
             })
             .then((device) => {
@@ -142,18 +184,36 @@ const HomeScreen = ({navigation}) => {
     }, 5000);
   };
 
+  // const Tip =()=>{
+  //   if(number < 10){
+  //   const calculate = 9
+  //   return calculate
+  // }
+  //   else{
+  //     return number
+  //   }
+  // }
+
   return (
     <SafeAreaView>
       <ScrollView>
         <View style={styles.Container}>
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity onPress={() => logout()}>
-              <Thumbnail small source={{uri: userData ? userData.userImg : 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png'}} />
+              <Thumbnail
+                small
+                source={{
+                  uri: userData
+                    ? userData.userImg
+                    : 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png',
+                }}
+              />
             </TouchableOpacity>
             <Text style={styles.TextInHeader}>
-              {userData ? userData.name:'Click Profile to Edit'}{'\n'}
+              {userData ? userData.name : 'Click Profile to Edit'}
+              {'\n'}
               <View style={{flexDirection: 'row'}}>
-                <View style={styles.GreenIcon} />
+                <View style={status ? styles.GreenIcon : styles.RedIcon} />
                 <Text style={styles.SubName}>Device : {Device}</Text>
               </View>
             </Text>
@@ -164,7 +224,7 @@ const HomeScreen = ({navigation}) => {
               color: '#FBD343',
               alignSelf: 'center',
               margin: 25,
-              fontSize: 16,
+              fontSize: 18,
             }}>
             ระดับแอลกอฮอล์ในเลือด (หน่วย mg%)
           </Text>
@@ -173,10 +233,11 @@ const HomeScreen = ({navigation}) => {
             <Text style={styles.TextInCircle}>{Data}</Text>
           </View>
 
-          <Text style={styles.TextAleart}>ไม่เกิน 50 mg% ไม่ผิดกฎหมาย</Text>
+          <CalculateLaw Data={Data} />
 
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.TextYellow}>คำนวนเวลา :</Text>
+            <Text style={[styles.TextYellow,{height:10,width:200}]}><CalculateTime Data={Data}/></Text>
             <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
               <Image
                 source={require('../Icons/information.png')}
@@ -184,12 +245,29 @@ const HomeScreen = ({navigation}) => {
                   width: 15,
                   height: 15,
                   marginTop: 30,
-                  marginLeft: 260,
+                  marginLeft: 20,
                 }}
               />
             </TouchableOpacity>
           </View>
-          <Text style={[styles.TextYellow, {marginBottom: 10}]}>อาการ :</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text
+              style={[
+                styles.TextYellow,
+                {marginBottom: 10, flexDirection: 'row'},
+              ]}>
+              อาการ :
+            </Text>
+
+            <Text
+              style={[
+                styles.TextYellow,
+                {marginBottom: 10, flexDirection: 'row', marginLeft:50,color:'#ffffff',height:20,width:200},
+              ]}>
+              <Symptom Data={Data} />
+            </Text>
+          </View>
+
           <View style={styles.ContainerIcon}>
             <ButtonHomeScreen
               Icon={require('../Icons/phone-call.png')}
@@ -199,29 +277,37 @@ const HomeScreen = ({navigation}) => {
             <ButtonHomeScreen
               Icon={require('../Icons/email.png')}
               Title="ข้อความติดต่อ"
-              onPress={()=>{ShareText(Data)}}
+              onPress={() => {
+                ShareText(Data);
+              }}
             />
             <ButtonHomeScreen
               Icon={require('../Icons/location.png')}
               Title="เปิด Google Map"
-              onPress={()=>GoMap()}
+              onPress={() => GoMap()}
             />
           </View>
           <View style={[styles.ContainerIcon, {marginBottom: 20}]}>
             <ButtonHomeScreen
               Icon={require('../Icons/auction.png')}
               Title="กฎหมาย"
-              onPress={() => {navigation.navigate('Law');}}
+              onPress={() => {
+                navigation.navigate('Law');
+              }}
             />
             <ButtonHomeScreen
               Icon={require('../Icons/help.png')}
               Title="คำแนะนำ"
-              onPress={() => {navigation.navigate('Advice');}}
+              onPress={() => {
+                navigation.navigate('Advice');
+              }}
             />
             <ButtonHomeScreen
               Icon={require('../Icons/bank.png')}
               Title="ประวัติรายจ่าย"
-              onPress={() => {navigation.navigate('Expense');}}
+              onPress={() => {
+                navigation.navigate('Expense');
+              }}
             />
           </View>
         </View>
@@ -249,6 +335,14 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     backgroundColor: '#24FF00',
+    borderRadius: 360,
+    marginTop: 3,
+    marginRight: 4,
+  },
+  RedIcon: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#ff0000',
     borderRadius: 360,
     marginTop: 3,
     marginRight: 4,

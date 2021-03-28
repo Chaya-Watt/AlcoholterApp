@@ -11,18 +11,17 @@ import moment from 'moment'
 
 const ListItem = ({item}) => {
 
+  // useEffect(()=>{
+  //   console.log('item: ',item)
+  // },[])
+
   // const {user, logout} = useContext(AuthContext);
   const [userValues, setUserValues] = useState(null);
-
-  useEffect(()=>{
-    console.log(item)
-  })
-  
 
   return (
     <TouchableOpacity style={styles.listItem}>
       <View style={styles.listItemView}>
-        <Text style={styles.listItemText}>{moment(item.postTime.toDate()).format("MMM Do YY")}</Text>
+        <Text style={styles.listItemText}>{moment(item.Time.toDate()).calendar()}</Text>
         <Text style={styles.listItemText}>{item.Detail}</Text>
         <Text style={styles.listItemText}>{item.Cost}</Text>
        

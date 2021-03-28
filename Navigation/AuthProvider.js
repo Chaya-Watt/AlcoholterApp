@@ -19,14 +19,14 @@ export const AuthProvider = ({children}) => {
             console.log(error);
           }
         },
-        register: async (email, password, userData,image) => {
+        register: async (email, password, userData, image) => {
           try {
             await auth()
               .createUserWithEmailAndPassword(email, password)
               .then(() => {
                 firestore()
                   .collection('users')
-                  .doc(auth().currentUser.uid)
+                  .doc(auth().currentUser.email)
                   .set({
                     name: userData.name,
                     email: email,
@@ -36,11 +36,23 @@ export const AuthProvider = ({children}) => {
                     weight: userData.weight,
                     phone1: userData.phone1,
                     phone2: userData.phone2,
-                    userImg:
-                      image,
+                    userImg: image,
                   })
-                  .then((f)=>{
-                    console.log("Sucess",f)
+                  .then((f) => {
+                    console.log('Sucess', f);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+                firestore()
+                  .collection('values')
+                  .doc(auth().currentUser.email)
+                  .set({
+                    History:[],
+                    Alcohol:[],
+                  })
+                  .then((f) => {
+                    console.log('Sucess', f);
                   })
                   .catch((error) => {
                     console.log(error);
