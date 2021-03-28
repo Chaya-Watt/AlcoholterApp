@@ -67,8 +67,6 @@ const ExpenseScreen = ({navigation, route}) => {
   useEffect(() => {
     const fetchValues = async () => {
       try {
-        // const list = [];
-
         await firestore()
           .collection('values')
           .doc(user.email)

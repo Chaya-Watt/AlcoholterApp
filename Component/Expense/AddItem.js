@@ -30,29 +30,29 @@ const AddItem = ({History,navigation,trigger}) => {
 
     const handleUpdate = async()=>{
 
-      if(History.length === 0){
-         firestore()
-        .collection('values')
-        .doc(user.email)
-        .set({
-          History:[{...userValues,Time:firestore.Timestamp.fromDate(new Date())}]
-        })
-        .then(()=>{
-          console.log('User Updated!')
-          Alert.alert(
-            'Values UpDate!',
-            'Your Values has been updated successfully'
-          )
-          trigger.setTrigger(true)
-          setUesrValues('')
-          // navigation.navigate('Home')
-        })
-        .catch((error)=>{
-           console.log(error)
-        })
-      }
+      // if(History.length === 0){
+      //    firestore()
+      //   .collection('values expense')
+      //   .doc(user.email)
+      //   .set({
+      //     History:[{...userValues,Time:firestore.Timestamp.fromDate(new Date())}]
+      //   })
+      //   .then(()=>{
+      //     console.log('User Updated!')
+      //     Alert.alert(
+      //       'Values UpDate!',
+      //       'Your Values has been updated successfully'
+      //     )
+      //     trigger.setTrigger(true)
+      //     setUesrValues('')
+      //     // navigation.navigate('Home')
+      //   })
+      //   .catch((error)=>{
+      //      console.log(error)
+      //   })
+      // }
       
-       if(History.length > 0){
+      //  if(History.length > 0){
          firestore()
         .collection('values')
         .doc(user.email)
@@ -71,7 +71,7 @@ const AddItem = ({History,navigation,trigger}) => {
         .catch((error)=>{
            console.log(error)
         })
-      }
+      // }
     }
 
     const updateTime =()=>{
