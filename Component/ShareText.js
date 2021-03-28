@@ -1,9 +1,14 @@
 import {Share} from 'react-native'
+import Symptom from '../Component/CalculateSymptom'
+
 
 const ShareText = async (Data) => {
         try {
+          console.log('Data: ',Data)
+          const text =  Symptom({Data})
+          console.log('text: ',text)
           const result = await Share.share({
-            message: Data + ' อาการ...',
+            message: Data + ' ' + text,
           });
           if (result.action === Share.sharedAction) {
             if (result.activityType) {

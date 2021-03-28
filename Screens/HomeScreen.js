@@ -17,6 +17,9 @@ import ShareText from '../Component/ShareText';
 import openMap from 'react-native-open-maps';
 import Geolocation from '@react-native-community/geolocation';
 import firestore from '@react-native-firebase/firestore';
+import CalculateLaw from '../Component/CalculateLaw';
+import Symptom from '../Component/CalculateSymptom';
+import CalculateTime from '../Component/CalculateTime'
 
 const manager = new BleManager();
 
@@ -67,17 +70,20 @@ const HomeScreen = ({navigation}) => {
   }, [navigation, loading]);
 
   const upDateAlcohol = async () => {
-      firestore()
+    firestore()
       .collection('values')
       .doc(user.email)
       .update({
-        Alcohol: firestore.FieldValue.arrayUnion({Data,Time:firestore.Timestamp.fromDate(new Date())}),
-      })
+        Alcohol: firestore.FieldValue.arrayUnion({
+          Data,
+          Time: firestore.Timestamp.fromDate(new Date()),
+        }),
+      });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     upDateAlcohol();
-  },[Data])
+  }, [Data]);
 
   useEffect(() => {
     //Use useEffect for do onstateChange function
@@ -93,7 +99,7 @@ const HomeScreen = ({navigation}) => {
       console.log('Out');
       clearInterval(TimerReadData);
       setDevice("Device Don't Connect");
-      setStatus(false)
+      setStatus(false);
       manager.cancelDeviceConnection('24:0A:C4:59:39:CE');
       manager.disable();
     };
@@ -119,7 +125,7 @@ const HomeScreen = ({navigation}) => {
             .then((deviceDis) => {
               //Discover device all service and characteristics
               console.log('Discover All Services And Characteristics');
-              setStatus(true)
+              setStatus(true);
               return deviceDis.discoverAllServicesAndCharacteristics();
             })
             .then((device) => {
@@ -199,7 +205,7 @@ const HomeScreen = ({navigation}) => {
               color: '#FBD343',
               alignSelf: 'center',
               margin: 25,
-              fontSize: 16,
+              fontSize: 18,
             }}>
             ระดับแอลกอฮอล์ในเลือด (หน่วย mg%)
           </Text>
@@ -208,23 +214,41 @@ const HomeScreen = ({navigation}) => {
             <Text style={styles.TextInCircle}>{Data}</Text>
           </View>
 
-          <Text style={styles.TextAleart}>ไม่เกิน 50 mg% ไม่ผิดกฎหมาย</Text>
+          <CalculateLaw Data={Data} />
 
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.TextYellow}>คำนวนเวลา :</Text>
-            <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+            <Text style={[styles.TextYellow,{height:10,width:200}]}><CalculateTime Data={Data}/></Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
               <Image
                 source={require('../Icons/information.png')}
                 style={{
                   width: 15,
                   height: 15,
                   marginTop: 30,
-                  marginLeft: 260,
+                  marginLeft: 20,
                 }}
               />
             </TouchableOpacity>
           </View>
-          <Text style={[styles.TextYellow, {marginBottom: 10}]}>อาการ :</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text
+              style={[
+                styles.TextYellow,
+                {marginBottom: 10, flexDirection: 'row'},
+              ]}>
+              อาการ :
+            </Text>
+
+            <Text
+              style={[
+                styles.TextYellow,
+                {marginBottom: 10, flexDirection: 'row', marginLeft:50,color:'#ffffff',height:20,width:200},
+              ]}>
+              <Symptom Data={Data} />
+            </Text>
+          </View>
+
           <View style={styles.ContainerIcon}>
             <ButtonHomeScreen
               Icon={require('../Icons/phone-call.png')}
