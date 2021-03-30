@@ -56,7 +56,7 @@ const CalculateTime = ({Data})=> {
             }
             else {
               return (
-                <Text style={styles.container}>ปริมาณแอลกอฮอล์ของคุณมากเกินไป รอมากกว่า 3 ชั่วโมง</Text>
+                <Text style={styles.container}>รอมากกว่า 3 ชั่วโมง</Text>
               )
             }
         })()}
