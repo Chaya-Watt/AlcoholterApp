@@ -9,10 +9,10 @@ import DeleteButton from './DeleteButton'
 // import {AuthContext} from '../Navigation/AuthProvider';
 import moment from 'moment'
 
-const ListItem = ({item}) => {
+const ListItem = ({item,trigger}) => {
 
   // useEffect(()=>{
-  //   console.log('item: ',item)
+  //   console.log('trigger: ',trigger)
   // },[])
 
   // const {user, logout} = useContext(AuthContext);
@@ -25,7 +25,7 @@ const ListItem = ({item}) => {
         <Text style={styles.listItemText}>{item.Detail}</Text>
         <Text style={styles.listItemText}>{item.Cost}</Text>
        
-          {/* <DeleteButton item={item}/> */}
+          <DeleteButton item={item} trigger={trigger}/>
         
       </View>
     </TouchableOpacity>

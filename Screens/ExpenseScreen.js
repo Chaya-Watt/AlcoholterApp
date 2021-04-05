@@ -108,7 +108,7 @@ const ExpenseScreen = ({navigation, route}) => {
       </View>
       <FlatList
         data={values}
-        renderItem={({item}) => <ListItem item={item} />}
+        renderItem={({item}) => <ListItem item={item} trigger={{trigger,setTrigger}}/>}
         keyExtractor={(item) => item.Time.toString()}
         // inverted={true}
       />
