@@ -1,5 +1,5 @@
 import React,{useState,useContext,useEffect} from 'react'
-import {View, Text, StyleSheet,TextInput,TouchableOpacity,Image,Alert } from 'react-native'
+import {View, Text, StyleSheet,TextInput,TouchableOpacity,Image,Alert,Modal,Pressable } from 'react-native'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment'
 import firestore from '@react-native-firebase/firestore';
@@ -10,6 +10,7 @@ const AddItem = ({History,navigation,trigger}) => {
     const [text, setText] = useState([]);
     const [cost,setCost] = useState([]);
     const {user} = useContext(AuthContext);
+    const [modalVisible, setModalVisible] = useState(false);
 
     //Date pinker
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -28,31 +29,27 @@ const AddItem = ({History,navigation,trigger}) => {
     hideDatePicker();
     };
 
+    const confirmAdd = ()=>{
+      Alert.alert(
+        'บันทึกประวัติค่าใช้จ่าย',
+        'เมื่อบันทึกค่าใช้จ่ายแล้วจะไม่สามารถลบหรือแก้ไขได้ คุณแน่ใจหรือไม่ว่าต้องการบันทึก?',
+        [
+          {
+            text: 'ยกเลิก',
+            onPress: () => console.log('Cancel Pressed!'),
+            style: 'cancel',
+          },
+          {
+            text: 'บันทึก',
+            onPress: () => handleUpdate(),
+          },
+        ],
+        {cancelable: false},
+      );
+    }
+
     const handleUpdate = async()=>{
 
-      // if(History.length === 0){
-      //    firestore()
-      //   .collection('values expense')
-      //   .doc(user.email)
-      //   .set({
-      //     History:[{...userValues,Time:firestore.Timestamp.fromDate(new Date())}]
-      //   })
-      //   .then(()=>{
-      //     console.log('User Updated!')
-      //     Alert.alert(
-      //       'Values UpDate!',
-      //       'Your Values has been updated successfully'
-      //     )
-      //     trigger.setTrigger(true)
-      //     setUesrValues('')
-      //     // navigation.navigate('Home')
-      //   })
-      //   .catch((error)=>{
-      //      console.log(error)
-      //   })
-      // }
-      
-      //  if(History.length > 0){
          firestore()
         .collection('values')
         .doc(user.email)
@@ -71,7 +68,6 @@ const AddItem = ({History,navigation,trigger}) => {
         .catch((error)=>{
            console.log(error)
         })
-      // }
     }
 
     const updateTime =()=>{
@@ -108,7 +104,7 @@ const AddItem = ({History,navigation,trigger}) => {
           style={styles.input2}
           onChangeText={costValue => setUesrValues({...userValues,Cost:costValue})} />
         <TouchableOpacity style={styles.btn} 
-            onPress={handleUpdate}>
+            onPress={confirmAdd}>
             <Text style={styles.btnText}>
               บันทึก
             </Text>

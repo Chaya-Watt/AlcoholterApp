@@ -25,7 +25,7 @@ const ListItem = ({item}) => {
         <Text style={styles.listItemText}>{item.Detail}</Text>
         <Text style={styles.listItemText}>{item.Cost}</Text>
        
-          <DeleteButton item={item}/>
+          {/* <DeleteButton item={item}/> */}
         
       </View>
     </TouchableOpacity>
