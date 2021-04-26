@@ -19,14 +19,14 @@ import Geolocation from '@react-native-community/geolocation';
 import firestore from '@react-native-firebase/firestore';
 import CalculateLaw from '../Component/CalculateLaw';
 import Symptom from '../Component/CalculateSymptom';
-import CalculateTime from '../Component/CalculateTime'
-import ButtonInformation from '../Component/ButtonInformation'
-import ButtonAlcohol from '../Component/ButtonAlcohol'
+import CalculateTime from '../Component/CalculateTime';
+import ButtonInformation from '../Component/ButtonInformation';
+import ButtonAlcohol from '../Component/ButtonAlcohol';
 
 const manager = new BleManager();
 
 const HomeScreen = ({navigation}) => {
-  const [Data, setData] = useState(0);
+  const [Data, setData] = useState(-1);
   const [Device, setDevice] = useState("Device Don't Connect");
   const [status, setStatus] = useState(false);
   const {user, logout} = useContext(AuthContext);
@@ -72,100 +72,106 @@ const HomeScreen = ({navigation}) => {
   }, [navigation, loading]);
 
   const upDateAlcohol = async () => {
-    firestore()
-      .collection('values')
-      .doc(user.email)
-      .update({
-        Alcohol: firestore.FieldValue.arrayUnion({
-          Data,
-          Time: firestore.Timestamp.fromDate(new Date()),
-        }),
-      });
+    if (Data == -1) {
+      return console.log("Don't Send Data to Database");
+    }
+
+    if (Data != -1) {
+      console.log("Send Data to Database");
+      firestore()
+        .collection('values')
+        .doc(user.email)
+        .update({
+          Alcohol: firestore.FieldValue.arrayUnion({
+            Data,
+            Time: firestore.Timestamp.fromDate(new Date()),
+          }),
+        });
+    }
   };
 
   useEffect(() => {
     upDateAlcohol();
   }, [Data]);
 
-  // useEffect(() => { 
-  //   //Use useEffect for do onstateChange function
-  //   const subscription = manager.onStateChange((state) => {
-  //     manager.enable();
-  //     if (state === 'PoweredOn') {
-  //       console.log(state);
-  //       scanAndConnect();
-  //       subscription.remove();
-  //     }
-  //   }, true);
-  //   return () => {
-  //     console.log('Out');
-  //     clearInterval(TimerReadData);
-  //     setDevice("Device Don't Connect");
-  //     manager.cancelDeviceConnection('24:0A:C4:59:39:CE');
-  //     manager.disable();
-  //   };
-  // }, []);
+  useEffect(() => {
+    //Use useEffect for do onstateChange function
+    const subscription = manager.onStateChange((state) => {
+      manager.enable();
+      if (state === 'PoweredOn') {
+        console.log(state);
+        scanAndConnect();
+        subscription.remove();
+      }
+    }, true);
+    return () => {
+      console.log('Out');
+      clearInterval(TimerReadData);
+      setDevice("Device Don't Connect");
+      manager.cancelDeviceConnection('24:0A:C4:59:39:CE');
+      manager.disable();
+    };
+  }, []);
 
-  // const scanAndConnect = async () =>
-  //   //Scan Device
-  //   {
-  //     console.log('Scan...Device');
-  //     setDevice("Don't Connect Device");
-  //     manager.startDeviceScan(null, null, (error, device) => {
-  //       if (error) {
-  //         console.log(error);
-  //         return;
-  //       }
-  //       if (device.name === 'ESP32 BLE') {
-  //         console.log('Found', device.name);
-  //         manager.stopDeviceScan();
-  //         console.log('Stop Scan');
-  //         setDevice(device.name);
-  //         device
-  //           .connect()
-  //           .then((deviceDis) => {
-  //             //Discover device all service and characteristics
-  //             console.log('Discover All Services And Characteristics');
-  //             setStatus(true);
-  //             return deviceDis.discoverAllServicesAndCharacteristics();
-  //           })
-  //           .then((device) => {
-  //             //Have DeviceID and Send to function ReadInfoID
-  //             console.log('DeviceID : ' + device.id);
-  //             return ReadInfoID(device);
-  //           })
-  //           .catch((error) => {
-  //             console.log(error);
-  //           });
-  //       }
-  //     });
-  //   };
+  const scanAndConnect = async () =>
+    //Scan Device
+    {
+      console.log('Scan...Device');
+      setDevice("Don't Connect Device");
+      manager.startDeviceScan(null, null, (error, device) => {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        if (device.name === 'ESP32 BLE') {
+          console.log('Found', device.name);
+          manager.stopDeviceScan();
+          console.log('Stop Scan');
+          setDevice(device.name);
+          device
+            .connect()
+            .then((deviceDis) => {
+              //Discover device all service and characteristics
+              console.log('Discover All Services And Characteristics');
+              setStatus(true);
+              return deviceDis.discoverAllServicesAndCharacteristics();
+            })
+            .then((device) => {
+              //Have DeviceID and Send to function ReadInfoID
+              console.log('DeviceID : ' + device.id);
+              return ReadInfoID(device);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      });
+    };
 
-  // //Read Service and Characteristic for device
-  // const ReadInfoID = async (device) => {
-  //   const ServicesID = await device.services();
-  //   console.log('ServiceID : ' + ServicesID[2].uuid); //Check ServiceUUID
+  //Read Service and Characteristic for device
+  const ReadInfoID = async (device) => {
+    const ServicesID = await device.services();
+    console.log('ServiceID : ' + ServicesID[2].uuid); //Check ServiceUUID
 
-  //   const CharacteristicID = await device.characteristicsForService(
-  //     ServicesID[2].uuid,
-  //   );
-  //   console.log('CharacteristicID : ' + CharacteristicID[0].uuid); //Check CharacteristicID
-  //   TimerReadData(device, ServicesID[2].uuid, CharacteristicID[0].uuid);
-  // };
+    const CharacteristicID = await device.characteristicsForService(
+      ServicesID[2].uuid,
+    );
+    console.log('CharacteristicID : ' + CharacteristicID[0].uuid); //Check CharacteristicID
+    TimerReadData(device, ServicesID[2].uuid, CharacteristicID[0].uuid);
+  };
 
-  // //Read Data for device
-  // const TimerReadData = async (device, Service, Characteristic) => {
-  //   setInterval(async () => {
-  //     const Data = await device.readCharacteristicForService(
-  //       Service,
-  //       Characteristic,
-  //     );
-  //     const realData = Math.floor(base64.decode(Data.value));
-  //     console.log('Value : ' + realData);
-  //     setData(realData);
-  //   }, 5000);
-  // };
-
+  //Read Data for device
+  const TimerReadData = async (device, Service, Characteristic) => {
+    setInterval(async () => {
+      const Data = await device.readCharacteristicForService(
+        Service,
+        Characteristic,
+      );
+      const realData = Math.floor(base64.decode(Data.value));
+      console.log('Value : ' + realData);
+      setData(realData);
+    }, 5000);
+  };
 
   return (
     <SafeAreaView>
@@ -173,7 +179,14 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.Container}>
           <View style={{flexDirection: 'row'}}>
             <TouchableOpacity onPress={() => navigation.openDrawer()}>
-              <Thumbnail small source={{uri: userData ? userData.userImg : 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png'}} />
+              <Thumbnail
+                small
+                source={{
+                  uri: userData
+                    ? userData.userImg
+                    : 'https://sv1.picz.in.th/images/2021/03/13/DtmGvZ.png',
+                }}
+              />
             </TouchableOpacity>
             <Text style={styles.TextInHeader}>
               {userData ? userData.name : 'Click Profile to Edit'}
@@ -192,19 +205,21 @@ const HomeScreen = ({navigation}) => {
               margin: 25,
               fontSize: 18,
             }}>
-            ระดับแอลกอฮอล์ในเลือด (หน่วย mg%)
+            ระดับแอลกอฮอล์ในลมหายใจ (หน่วย mg%)
           </Text>
 
           <View style={styles.GrayCircle}>
-            <Text style={styles.TextInCircle}>{Data}</Text>
+            <Text style={styles.TextInCircle}>{Data == -1 ? 0 : Data}</Text>
           </View>
 
           <CalculateLaw Data={Data} />
 
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.TextYellow}>คำนวนเวลา :</Text>
-            <Text style={[styles.TextYellow,{height:20,width:200}]}><CalculateTime Data={Data}/></Text>
-            <ButtonInformation/>
+            <Text style={[styles.TextYellow, {height: 20, width: 200}]}>
+              <CalculateTime Data={Data} />
+            </Text>
+            <ButtonInformation />
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text
@@ -217,11 +232,18 @@ const HomeScreen = ({navigation}) => {
             <Text
               style={[
                 styles.TextYellow,
-                {marginBottom: 10, flexDirection: 'row', marginLeft:52,color:'#ffffff',height:20,width:200},
+                {
+                  marginBottom: 10,
+                  flexDirection: 'row',
+                  marginLeft: 52,
+                  color: '#ffffff',
+                  height: 20,
+                  width: 200,
+                },
               ]}>
               <Symptom Data={Data} />
             </Text>
-            <ButtonAlcohol/>
+            <ButtonAlcohol />
           </View>
 
           <View style={styles.ContainerIcon}>

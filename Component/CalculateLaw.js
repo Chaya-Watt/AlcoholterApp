@@ -10,9 +10,14 @@ const CalculateLaw = ({Data}) => {
   return (
     <View>
         {(() => {
-            if (Data <= 50) {
+            if (Data < 50) {
               return (
                 <Text style={styles.container}>ไม่เกิน 50 mg% ไม่ผิดกฎหมาย</Text>
+              )
+            } 
+            if (Data == 50) {
+              return (
+                <Text style={styles.container1}>50 mg% ผิดกฎหมาย</Text>
               )
             } 
             else  {
